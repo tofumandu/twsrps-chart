@@ -80,12 +80,19 @@
         }
 
         .bottomrow {
-            display: flex;
+            display: grid;
             justify-content: center;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
             margin-top: 20px
+        }
+
+
+        .bottomrow,
+        .toggle span,
+        .btns button {
+            font-size: 14px;
         }
 
         .section-title {
@@ -365,6 +372,16 @@
                 align-items: flex-start
             }
 
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 12px;
+            }
+
+            .legend {
+                gap: 7px;
+            }
+
             .legend-item {
                 gap: 6px;
                 padding: 4px 6px;
@@ -373,6 +390,10 @@
             .member,
             .pair {
                 font-size: 10px;
+            }
+
+            .credit {
+                font-size: 8px;
             }
         }
 
@@ -387,6 +408,17 @@
                 font-size: 8px;
                 padding: 7px 6px;
             }
+
+            .credit {
+                font-size: 7px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 9px;
+            }
+
         }
 
         @media(max-width: 550px) {
@@ -399,6 +431,25 @@
             .legend-fixed {
                 font-size: 8px;
             }
+
+            .legend {
+                gap: 5px;
+            }
+
+            .legend-item {
+                gap: 6px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 8px;
+            }
+
+            .credit {
+                font-size: 6px;
+            }
+
         }
 
         @media(max-width: 500px) {
@@ -411,6 +462,25 @@
             .palette {
                 width: min(200px, calc(100vw - 18px));
             }
+
+            .legend {
+                gap: 3px;
+            }
+
+            .legend-item {
+                gap: 3px;
+            }
+
+            .credit {
+                font-size: 5px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 7px;
+            }
+
         }
     </style>
 </head>
@@ -441,8 +511,10 @@
                 <span class="switch"></span>
                 <span>Display date</span>
             </label>
-            <button id="download" class="primary">Download PNG</button>
-            <button id="reset">Reset</button>
+            <div class="btns">
+                <button id="download" class="primary">Download PNG</button>
+                <button id="reset">Reset</button>
+            </div>
         </div>
         <div class="credit">
             site by © tofumandu_
@@ -453,7 +525,7 @@
 
     <script>
         const STORAGE_KEY = "tws-rps-chart";
-        const seededPairs = { "0-1": "NITDO", "0-2": "NIDJAE", "0-3": "NITHAN", "0-4": "NITHOON", "0-5": "NITKYUNG", "1-0": "DONIT", "1-2": "DOHJAE", "1-3": "DOHHAN", "1-4": "DOHAEP", "1-5": "DOHTAENG", "2-0": "JAENID", "2-1": "JAEDOH", "2-3": "YOUNGHANJ", "2-4": "YOUNGHAEP", "2-5": "YOUNGMIK", "3-0": "HANNIT", "3-1": "HANDOH", "3-2": "HANJJAE", "3-4": "HANHAEP", "3-5": "HANJKAENG", "4-0": "HAEPNIT", "4-1": "HAEPDO", "4-2": "HAEPJAE", "4-3": "HOONZHEN", "4-5": "HOONKAENG", "5-0": "KYUNGNIT", "5-1": "KYUNGDOH", "5-2": "MIKYUNG", "5-3": "KYUNGZHEN", "5-4": "KYUNGHAEP" };
+        const seededPairs = { "0-1": "NITDO", "0-2": "NIDJAE", "0-3": "NITHAN", "0-4": "NITHOON", "0-5": "NITKYUNG/\nNIDKYUNG", "1-0": "DONIT", "1-2": "DOHJAE", "1-3": "DOHHAN", "1-4": "DOHAEP", "1-5": "DOHTAENG", "2-0": "JAENID", "2-1": "JAEDOH", "2-3": "YOUNGHANJ", "2-4": "YOUNGHAEP", "2-5": "YOUNGMIK", "3-0": "HANNIT", "3-1": "HANDOH", "3-2": "HANJJAE", "3-4": "HANHAEP", "3-5": "HANJKAENG", "4-0": "HAEPNIT", "4-1": "HAEPDO", "4-2": "HAEPJAE", "4-3": "HOONZHEN", "4-5": "HOONKAENG", "5-0": "KYUNGNIT", "5-1": "KYUNGDOH", "5-2": "MIKYOUNG/\nKYUNGJAE", "5-3": "KYUNGZHEN", "5-4": "KYUNGHAEP" };
         const defaults = {
             members: ["SHINYU", "DOHOON", "YOUNGJAE", "HANJIN", "JIHOON", "KYUNGMIN"],
             categories: [
