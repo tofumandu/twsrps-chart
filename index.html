@@ -28,17 +28,17 @@
     <div class="page">
         <div class="page-header">
             <div class="title">
-                <h1>TWS RPS Chart</h1>
+                <h1 id="chartTitle">TWS RPS Chart</h1>
             </div>
             <div class="header-actions">
                 <div class="dropdown">
                     <button class="dropbtn" type="button">
-                        chart
+                        <span id="chartLabel">RPS Chart</span>
                         <i class="fa-solid fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <a href="index.html">RPS Chart</a>
-                        <a href="chemi.html">Chemi Chart</a>
+                        <a href="#" onclick="switchChart('rps')">RPS Chart</a>
+                        <a href="#" onclick="switchChart('chemi')">Chemi Chart</a>
                     </div>
                 </div>
             </div>
@@ -57,12 +57,13 @@
                 <tbody id="body"></tbody>
             </table>
         </div>
-        <p class="desc">
+        <p class="desc" id="chartDesc">
             <b>RPS</b> stands for <b>Real Person Slash</b> (also known as <i>Real Person Shipping</i>).<br>It is a type
             of fan
             fiction or fan art where real-life K-pop idols are paired together in romantic or sexual, same-sex
             relationships.
-            <br>The <b>RPS</b> and <a href="chemi.html" style="text-decoration: none; color: black;"><b>Chemi</b></a>
+            <br>The <b>RPS</b> and <a href="#" onclick="switchChart('chemi')"
+                style="text-decoration: none; color: black;"><b>Chemi</b></a>
             were
             intentionally kept separate to prevent the mixed content.
         </p>
@@ -85,8 +86,16 @@
 
     <script>
         const STORAGE_KEY = "tws-rps-chart";
-        const seededPairs = { "0-1": "NITDO", "0-2": "NIDJAE", "0-3": "NITHAN", "0-4": "NITHOON", "0-5": "NITKYUNG/\nNIDKYUNG", "1-0": "DONIT", "1-2": "DOHJAE", "1-3": "DOHHAN", "1-4": "DOHAEP", "1-5": "DOHTAENG", "2-0": "JAENID", "2-1": "JAEDOH", "2-3": "YOUNGHANJ", "2-4": "YOUNGHAEP", "2-5": "YOUNGMIK", "3-0": "HANNIT", "3-1": "HANDOH", "3-2": "HANJJAE", "3-4": "HANHAEP", "3-5": "HANJKAENG", "4-0": "HAEPNIT", "4-1": "HAEPDO", "4-2": "HAEPJAE", "4-3": "HOONZHEN", "4-5": "HOONKAENG", "5-0": "KYUNGNIT", "5-1": "KYUNGDOH", "5-2": "MIKYOUNG/\nKYUNGJAE", "5-3": "KYUNGZHEN", "5-4": "KYUNGHAEP" };
-        const defaults = {
+
+        // RPS Chart data
+        const rpsSeededPairs = { "0-1": "NITDO", "0-2": "NIDJAE", "0-3": "NITHAN", "0-4": "NITHOON", "0-5": "NITKYUNG/\nNIDKYUNG", "1-0": "DONIT", "1-2": "DOHJAE", "1-3": "DOHHAN", "1-4": "DOHAEP", "1-5": "DOHTAENG", "2-0": "JAENID", "2-1": "JAEDOH", "2-3": "YOUNGHANJ", "2-4": "YOUNGHAEP", "2-5": "YOUNGMIK", "3-0": "HANNIT", "3-1": "HANDOH", "3-2": "HANJJAE", "3-4": "HANHAEP", "3-5": "HANJKAENG", "4-0": "HAEPNIT", "4-1": "HAEPDO", "4-2": "HAEPJAE", "4-3": "HOONZHEN", "4-5": "HOONKAENG", "5-0": "KYUNGNIT", "5-1": "KYUNGDOH", "5-2": "MIKYOUNG/\nKYUNGJAE", "5-3": "KYUNGZHEN", "5-4": "KYUNGHAEP" };
+
+        // Chemi Chart data
+        const chemiSeededPairs = { "0-1": "YUDOZ", "0-2": "UYUPPANGZ", "0-3": "HANRYUZ", "0-4": "MEONGPPIZ", "0-5": "MADMAKZ", "1-0": "YUDOZ", "1-2": "PPANGTTOZ", "1-3": "HANDOZ", "1-4": "HOONHOONZ", "1-5": "NEUKDAENGZ", "2-0": "UYUPPANGZ", "2-1": "PPANGTTOZ", "2-3": "JINIZ", "2-4": "HOONJERANZ", "2-5": "TAENGGEULZ", "3-0": "HANRYUZ", "3-1": "HANDOZ", "3-2": "JINIZ", "3-4": "PPANGYUKZ/06Z", "3-5": "CATMEONGZ", "4-0": "MEONGPPIZ", "4-1": "HOONHOONZ", "4-2": "HOONJERANZ", "4-3": "PPANGYUKZ/06Z", "4-5": "MINIHOONIE", "5-0": "MADMAKZ", "5-1": "NEUKDAENGZ", "5-2": "TAENGGEULZ", "5-3": "CATMEONGZ", "5-4": "MINIHOONIE" };
+
+        let currentChart = 'rps';
+
+        const rpsDefaults = {
             members: ["SHINYU", "DOHOON", "YOUNGJAE", "HANJIN", "JIHOON", "KYUNGMIN"],
             categories: [
                 { name: "OTP", color: "#ffbbbb" },
@@ -95,20 +104,47 @@
                 { name: "NOT INTERSTED", color: "#FFFFFF" },
                 { name: "NOTP", color: "#404142" }
             ],
-            cells: Object.fromEntries(Object.entries(seededPairs).map(([k, v]) => [k, { text: v, category: null }]))
+            cells: Object.fromEntries(Object.entries(rpsSeededPairs).map(([k, v]) => [k, { text: v, category: null }]))
         };
-        let state = load(), active = null;
+
+        const chemiDefaults = {
+            members: ["SHINYU", "DOHOON", "YOUNGJAE", "HANJIN", "JIHOON", "KYUNGMIN"],
+            categories: [
+                { name: "OTP", color: "#ffbbbb" },
+                { name: "LIKE IT", color: "#ffd99c" },
+                { name: "OKAY", color: "#fffaa4" },
+                { name: "NOT INTERSTED", color: "#FFFFFF" },
+                { name: "NOTP", color: "#404142" }
+            ],
+            cells: Object.fromEntries(Object.entries(chemiSeededPairs).map(([k, v]) => [k, { text: v, category: null }]))
+        };
+
+        let state = clone(rpsDefaults), active = null;
+
+        function switchChart(chartType) {
+            currentChart = chartType;
+            const defaults = chartType === 'rps' ? rpsDefaults : chemiDefaults;
+            state = clone(defaults);
+
+            // Update UI
+            document.getElementById('chartTitle').textContent = chartType === 'rps' ? 'TWS RPS Chart' : 'TWS Chemi Chart';
+            document.getElementById('chartLabel').textContent = chartType === 'rps' ? 'RPS Chart' : 'Chemi Chart';
+
+            if (chartType === 'rps') {
+                document.getElementById('chartDesc').innerHTML = '<b>RPS</b> stands for <b>Real Person Slash</b> (also known as <i>Real Person Shipping</i>).<br>It is a type of fan fiction or fan art where real-life K-pop idols are paired together in romantic or sexual, same-sex relationships.<br>The <b>RPS</b> and <a href="#" onclick="switchChart(\'chemi\')" style="text-decoration: none; color: black;"><b>Chemi</b></a> were intentionally kept separate to prevent the mixed content.';
+            } else {
+                document.getElementById('chartDesc').innerHTML = '<b>Chemi</b> (Chemistry) refers to the on-screen chemistry and compatibility between real-life K-pop idols. It is often discussed and appreciated by fans to evaluate the dynamic and interactions between members.<br>The <b>RPS</b> and <b>Chemi</b> were intentionally kept separate to prevent the mixed content.';
+            }
+
+            render();
+        }
+
         function clone(x) { return JSON.parse(JSON.stringify(x)) }
         function load() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return clone(defaults);
-                const s = JSON.parse(raw);
-                return s.members?.length === 6 ? s : clone(defaults);
-            } catch { return clone(defaults) }
+            return clone(currentChart === 'rps' ? rpsDefaults : chemiDefaults);
         }
         function save() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            // Disabled - no localStorage
         }
         function isDark(hex) {
             if (!hex) return false;
@@ -148,7 +184,7 @@
                 input.className = "member"; input.value = m;
                 input.oninput = () => {
                     state.members[c] = input.value;
-                    document.querySelectorAll(`[data-member="${c}"]`).forEach(x => x.value = input.value); save()
+                    document.querySelectorAll(`[data-member="${c}"]`).forEach(x => x.value = input.value);
                 };
                 input.dataset.member = c; th.append(input);
                 head.append(th);
@@ -156,7 +192,7 @@
             state.members.forEach((m, r) => {
                 const tr = document.createElement("tr"), th = document.createElement("th"), input = document.createElement("input");
                 input.className = "member"; input.value = m; input.dataset.member = r;
-                input.oninput = () => { state.members[r] = input.value; document.querySelectorAll(`[data-member="${r}"]`).forEach(x => x.value = input.value); save() };
+                input.oninput = () => { state.members[r] = input.value; document.querySelectorAll(`[data-member="${r}"]`).forEach(x => x.value = input.value); };
                 th.append(input); tr.append(th);
                 for (let c = 0; c < 6; c++) {
                     const td = document.createElement("td"), key = `${r}-${c}`;
@@ -190,11 +226,11 @@
             state.categories.forEach((cat, i) => {
                 const b = document.createElement("button"); b.textContent = cat.name; b.style.background = cat.color;
                 b.style.color = isDark(cat.color) ? "#ffffff" : "#111214";
-                b.onclick = () => { state.cells[active].category = i; save(); renderTable(); closePalette() };
+                b.onclick = () => { state.cells[active].category = i; renderTable(); closePalette() };
                 p.append(b);
             });
             const clear = document.createElement("button"); clear.className = "clear"; clear.textContent = "Clear color";
-            clear.onclick = () => { state.cells[active].category = null; save(); renderTable(); closePalette() }; p.append(clear);
+            clear.onclick = () => { state.cells[active].category = null; renderTable(); closePalette() }; p.append(clear);
         }
         function openPalette(btn, key) {
             active = key; renderPalette(); const r = btn.getBoundingClientRect();
@@ -219,7 +255,7 @@
             return lines;
         }
         function downloadPNG() {
-            const titleText = document.querySelector(".title h1").textContent.trim();
+            const titleText = document.getElementById("chartTitle").textContent.trim();
             const dateOn = document.getElementById("dateToggle").checked;
             const creditText = "site by © tofumandu_";
 
@@ -400,7 +436,7 @@
             ctx.fillStyle = "#36383c";
             ctx.font = "800 12px Arial";
             ctx.textAlign = "center";
-            ctx.fillText("TWS RPS", tableX + leftColW / 2, tableY + headH / 2 + 2);
+            ctx.fillText(currentChart === 'rps' ? "TWS RPS" : "TWS CHEMI", tableX + leftColW / 2, tableY + headH / 2 + 2);
 
             ctx.save();
             ctx.globalAlpha = 0.3;
@@ -413,7 +449,7 @@
             can.toBlob(blob => {
                 const a = document.createElement("a");
                 a.href = URL.createObjectURL(blob);
-                a.download = "tws-rps-chart.png";
+                a.download = currentChart === 'rps' ? "tws-rps-chart.png" : "tws-chemi-chart.png";
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(a.href), 1000);
             }, "image/png");
