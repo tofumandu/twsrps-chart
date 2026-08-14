@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <title>TWS Chemi Pair Chart</title>
+    <meta property="og:title" content="TWS Chemi Pair Chart">
+    <meta property="og:description" content="TWS Chemi Pair Chart - by tofumandu_">
+    <meta property="og:image" content="https://i.pinimg.com/736x/9c/87/9b/9c879bb535cd38a10ea618ccd0112c7e.jpg">
+    <meta property="og:url" content="https://twsrpsc-chart.vercel.app">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TWS Chemi Pair Chart">
+    <meta name="twitter:description" content="TWS Chemi Pair Chart - by tofumandu_">
+    <meta name="twitter:image" content="https://i.pinimg.com/736x/9c/87/9b/9c879bb535cd38a10ea618ccd0112c7e.jpg">
+    <style>
+        :root {
+            --ink: #101114;
+            --muted: #e7e9eb;
+            --line: rgba(64, 65, 66, 0.2);
+            --header: #e7e9eb;
+            --c0: #ffbbbb;
+            --c1: #ffd99c;
+            --c2: #fffaa4;
+            --c3: #FFFFFF;
+            --c4: #404142;
+            --font-main: "Montserrat", "Segoe UI", Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: #fff;
+            color: var(--ink);
+            font-family: var(--font-main);
+        }
+
+        .page {
+            width: min(1200px, calc(100% - 34px));
+            margin: auto;
+            padding: 32px 0 54px
+        }
+
+        .credit {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0.3;
+            font-size: 9px;
+            margin-top: 14px;
+            color: var(--ink);
+        }
+
+        .page-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+        }
+
+        .title h1 {
+            margin: 8px auto 0;
+            font-size: 32px;
+            line-height: 1.05;
+            font-weight: 800;
+            letter-spacing: -.03em
+        }
+
+        .header-actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(16, 17, 20, 0.04);
+            transition: all .18s ease;
+        }
+
+        .dropbtn i {
+            font-size: 11px;
+            opacity: .8;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            min-width: 170px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(10, 12, 14, 0.08);
+            z-index: 20;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 11px 14px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            background: #fff;
+            border-bottom: 1px solid rgba(64, 65, 66, 0.08);
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: #f5f5f6;
+        }
+
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn,
+        .dropdown:focus-within .dropbtn {
+            background: #f8f8f8;
+            border-color: rgba(64, 65, 66, 0.32);
+        }
+
+        .toprow {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 18px
+        }
+
+        .bottomrow {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px
+        }
+
+
+        .bottomrow,
+        .toggle span,
+        .btns button {
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--muted);
+            font-weight: 800;
+            margin-bottom: 8px
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-wrap: wrap;
+            justify-content: center
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 9px;
+        }
+
+        .dot {
+            width: clamp(15px, 2.1vw, 23px);
+            height: clamp(15px, 2.1vw, 23px);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, .1);
+            cursor: pointer
+        }
+
+        .legend-fixed {
+            font-size: clamp(9px, 1.4vw, 12px);
+            font-weight: 700;
+            color: #34363a;
+            padding: 1px 2px
+        }
+
+        .tools {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        button {
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid var(--line);
+            background: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer
+        }
+
+        button:hover {
+            transform: translateY(-1px)
+        }
+
+        .primary {
+            background: #111214;
+            color: #fff;
+            border-color: #111214
+        }
+
+        .toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 700
+        }
+
+        .toggle input {
+            position: absolute;
+            opacity: 0
+        }
+
+        .switch {
+            width: 33px;
+            height: 19px;
+            border-radius: 999px;
+            background: #d3d4d7;
+            position: relative
+        }
+
+        .switch:after {
+            content: "";
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #fff;
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+            transition: .18s
+        }
+
+        .toggle input:checked+.switch {
+            background: #111214
+        }
+
+        .toggle input:checked+.switch:after {
+            transform: translateX(14px)
+        }
+
+        /* ---- Responsive chart: shrinks with its container instead of scrolling ---- */
+        .chart-shell {
+            border: 1px solid #e5e6e9;
+            border-radius: 16px;
+            overflow: hidden;
+            container-type: inline-size;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            padding: 0;
+
+            border: 0.5px solid var(--line);
+            /* border-opacity: 0.3; */
+
+        }
+
+        thead th {
+            height: clamp(38px, 9cqi, 66px);
+            background: var(--header);
+            color: #000000;
+            /* border: 1px solid var(); */
+        }
+
+        thead th:first-child {
+            width: 16%;
+            border-top-left-radius: 14px
+        }
+
+        thead th:last-child {
+            border-top-right-radius: 14px;
+            border-right: 0
+        }
+
+        tbody th {
+            height: clamp(44px, 11.5cqi, 80px);
+            background: var(--header);
+            color: #36383c;
+            /* border-right: 1px solid rgba(255, 255, 255, .13);
+            border-bottom: 1px solid rgba(255, 255, 255, .13) */
+        }
+
+        tbody tr:last-child th {
+            border-bottom-left-radius: 14px;
+            border-bottom: 0
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0
+        }
+
+        .member {
+            width: 95%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #36383c;
+            text-align: center;
+            font-weight: 800;
+            font-size: clamp(9px, 2.4cqi, 13px);
+            padding: clamp(3px, 1.4cqi, 8px);
+        }
+
+        .corner {
+            font-size: clamp(8px, 1.8cqi, 12px);
+            color: #36383c;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em
+        }
+
+        .diag {
+            background: #ded9ec !important
+        }
+
+        .cell {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: none;
+            border-radius: 0
+        }
+
+        .cell:hover {
+            transform: none;
+            box-shadow: none
+        }
+
+        .pair {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(3px, 1.6cqi, 8px) clamp(4px, 2cqi, 10px);
+            font-weight: 700;
+            font-size: clamp(8px, 2.2cqi, 13px);
+            line-height: 1.18;
+            text-align: center;
+            color: inherit;
+            cursor: pointer;
+            overflow-wrap: break-word;
+        }
+
+        .status {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 11px;
+            text-align: right
+        }
+
+        .palette {
+            position: fixed;
+            display: none;
+            z-index: 20;
+            width: min(220px, calc(100vw - 24px));
+            padding: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, .14)
+        }
+
+        .palette.show {
+            display: flex
+        }
+
+        .palette button {
+            flex: 1 1 calc(50% - 6px);
+            padding: 8px 7px;
+            font-size: clamp(8px, 1.6vw, 11px)
+        }
+
+        .palette .clear {
+            flex-basis: 100%
+        }
+
+        @media(max-width:760px) {
+            .page {
+                width: calc(100% - 18px);
+                padding-top: 18px
+            }
+
+            .title h1 {
+                font-size: 25px
+            }
+
+            .dropbtn,
+            .dropbtn i {
+                font-size: 10px;
+            }
+
+            .toprow {
+                align-items: flex-start
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 12px;
+            }
+
+            .legend {
+                gap: 7px;
+            }
+
+            .legend-item {
+                gap: 6px;
+                padding: 4px 6px;
+            }
+
+            .member,
+            .pair {
+                font-size: 10px;
+            }
+
+            .credit {
+                font-size: 8px;
+            }
+        }
+
+        @media(max-width: 600px) {
+
+            .dropbtn,
+            .dropbtn i {
+                font-size: 8px;
+            }
+
+            .member,
+            .pair {
+                font-size: 9px;
+            }
+
+            .palette button {
+                font-size: 8px;
+                padding: 7px 6px;
+            }
+
+            .credit {
+                font-size: 7px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 9px;
+            }
+
+        }
+
+        @media(max-width: 550px) {
+
+            .member,
+            .pair {
+                font-size: 8px;
+            }
+
+            .legend-fixed {
+                font-size: 8px;
+            }
+
+            .legend {
+                gap: 5px;
+            }
+
+            .legend-item {
+                gap: 6px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 8px;
+            }
+
+            .credit {
+                font-size: 6px;
+            }
+
+        }
+
+        @media(max-width: 500px) {
+
+            .member,
+            .pair {
+                font-size: 7px;
+            }
+
+            .palette {
+                width: min(200px, calc(100vw - 18px));
+            }
+
+            .legend {
+                gap: 3px;
+            }
+
+            .legend-item {
+                gap: 3px;
+            }
+
+            .credit {
+                font-size: 5px;
+            }
+
+            .bottomrow,
+            .toggle span,
+            .btns button {
+                font-size: 7px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <div class="title">
+                <h1>TWS Chemi Pair CHART</h1>
+            </div>
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="dropbtn" type="button">
+                        chart
+                        <i class="fa-solid fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="index.html">RPS Chart</a>
+                        <a href="chemi.html">Chemi Chart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="toprow">
+            <div>
+                <div id="legend" class="legend"></div>
+            </div>
+        </div>
+
+        <div class="chart-shell">
+            <table id="chart">
+                <thead>
+                    <tr id="head"></tr>
+                </thead>
+                <tbody id="body"></tbody>
+            </table>
+        </div>
+        <div class="bottomrow">
+            <label class="toggle">
+                <input id="dateToggle" type="checkbox">
+                <span class="switch"></span>
+                <span>Display date</span>
+            </label>
+            <div class="btns">
+                <button id="download" class="primary">Download PNG</button>
+                <button id="reset">Reset</button>
+            </div>
+        </div>
+        <div class="credit">
+            site by © tofumandu_
+        </div>
+    </div>
+
+    <div id="palette" class="palette"></div>
+
+    <script>
+        const STORAGE_KEY = "tws-rps-chart";
+        const seededPairs = { "0-1": "YUDOZ", "0-2": "UYUPPANGZ", "0-3": "HANRYUZ", "0-4": "MEONGPPIZ", "0-5": "MADMAKZ", "1-0": "YUDOZ", "1-2": "PPANGTTOZ", "1-3": "HANDOZ", "1-4": "HOONHOONZ", "1-5": "NEUKDAENGZ", "2-0": "UYUPPANGZ", "2-1": "PPANGTTOZ", "2-3": "JINIZ", "2-4": "HOONJERANZ", "2-5": "TAENGGEULZ", "3-0": "HANRYUZ", "3-1": "HANDOZ", "3-2": "JINIZ", "3-4": "PPANGYUKZ/06Z", "3-5": "CATMEONGZ", "4-0": "MEONGPPIZ", "4-1": "HOONHOONZ", "4-2": "HOONJERANZ", "4-3": "PPANGYUKZ/06Z", "4-5": "MINIHOONIE", "5-0": "MADMAKZ", "5-1": "NEUKDAENGZ", "5-2": "TAENGGEULZ", "5-3": "CATMEONGZ", "5-4": "MINIHOONIE" };
+        const defaults = {
+            members: ["SHINYU", "DOHOON", "YOUNGJAE", "HANJIN", "JIHOON", "KYUNGMIN"],
+            categories: [
+                { name: "OTP", color: "#ffbbbb" },
+                { name: "LIKE IT", color: "#ffd99c" },
+                { name: "OKAY", color: "#fffaa4" },
+                { name: "NOT INTERSTED", color: "#FFFFFF" },
+                { name: "NOTP", color: "#404142" }
+            ],
+            cells: Object.fromEntries(Object.entries(seededPairs).map(([k, v]) => [k, { text: v, category: null }]))
+        };
+        let state = load(), active = null;
+        function clone(x) { return JSON.parse(JSON.stringify(x)) }
+        function load() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return clone(defaults);
+                const s = JSON.parse(raw);
+                return s.members?.length === 6 ? s : clone(defaults);
+            } catch { return clone(defaults) }
+        }
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+        function isDark(hex) {
+            if (!hex) return false;
+            hex = hex.replace('#', '');
+            if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+            const r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16);
+            const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return lum < 0.5;
+        }
+        function renderLegend() {
+            const el = document.getElementById("legend"); el.innerHTML = "";
+            state.categories.forEach((cat) => {
+                const item = document.createElement("div"); item.className = "legend-item";
+
+                const dot = document.createElement("span");
+                dot.className = "dot";
+                dot.style.background = cat.color;
+                dot.style.cursor = "default";
+
+                const name = document.createElement("span");
+                name.className = "legend-fixed";
+                name.textContent = cat.name;
+
+                item.append(dot, name);
+                el.append(item);
+            });
+        }
+
+        function renderTable() {
+            const head = document.getElementById("head"), body = document.getElementById("body");
+            head.innerHTML = ""; body.innerHTML = "";
+            const corner = document.createElement("th");
+            corner.innerHTML = '<div class="corner">──୨ৎ──</div>';
+            head.append(corner);
+            state.members.forEach((m, c) => {
+                const th = document.createElement("th"), input = document.createElement("input");
+                input.className = "member"; input.value = m;
+                input.oninput = () => {
+                    state.members[c] = input.value;
+                    document.querySelectorAll(`[data-member="${c}"]`).forEach(x => x.value = input.value); save()
+                };
+                input.dataset.member = c; th.append(input);
+                head.append(th);
+            });
+            state.members.forEach((m, r) => {
+                const tr = document.createElement("tr"), th = document.createElement("th"), input = document.createElement("input");
+                input.className = "member"; input.value = m; input.dataset.member = r;
+                input.oninput = () => { state.members[r] = input.value; document.querySelectorAll(`[data-member="${r}"]`).forEach(x => x.value = input.value); save() };
+                th.append(input); tr.append(th);
+                for (let c = 0; c < 6; c++) {
+                    const td = document.createElement("td"), key = `${r}-${c}`;
+                    if (r === c) {
+                        td.className = "diag";
+                        td.innerHTML = '<div class="cell">—</div>'
+                    }
+                    else {
+                        const btn = document.createElement("button"); btn.className = "cell"; btn.type = "button";
+                        const pair = document.createElement("div"); pair.className = "pair";
+                        pair.textContent = state.cells[key]?.text || "";
+                        const ci = state.cells[key]?.category;
+                        const cat = (ci !== undefined && ci !== null) ? state.categories[ci] : null;
+                        if (cat) {
+                            td.style.background = cat.color;
+                            pair.style.color = isDark(cat.color) ? "#ffffff" : "#111214";
+                        } else {
+                            td.style.background = "";
+                            pair.style.color = "#111214";
+                        }
+                        btn.onclick = () => openPalette(btn, key);
+                        btn.append(pair); td.append(btn);
+                    }
+                    tr.append(td);
+                }
+                body.append(tr);
+            });
+        }
+        function renderPalette() {
+            const p = document.getElementById("palette"); p.innerHTML = "";
+            state.categories.forEach((cat, i) => {
+                const b = document.createElement("button"); b.textContent = cat.name; b.style.background = cat.color;
+                b.style.color = isDark(cat.color) ? "#ffffff" : "#111214";
+                b.onclick = () => { state.cells[active].category = i; save(); renderTable(); closePalette() };
+                p.append(b);
+            });
+            const clear = document.createElement("button"); clear.className = "clear"; clear.textContent = "Clear color";
+            clear.onclick = () => { state.cells[active].category = null; save(); renderTable(); closePalette() }; p.append(clear);
+        }
+        function openPalette(btn, key) {
+            active = key; renderPalette(); const r = btn.getBoundingClientRect();
+            const p = document.getElementById("palette"); p.style.left = Math.min(innerWidth - 230, Math.max(8, r.left + r.width / 2 - 110)) + "px"; p.style.top = Math.min(innerHeight - 170, r.bottom + 7) + "px"; p.classList.add("show");
+        }
+        function closePalette() { document.getElementById("palette").classList.remove("show"); active = null }
+        document.addEventListener("click", e => { if (!e.target.closest("#palette") && !e.target.closest(".cell")) closePalette() });
+
+        function currentDate() {
+            return new Intl.DateTimeFormat("en-US").format(new Date())
+        }
+        function wrapText(ctx, text, maxWidth) {
+            const words = (text || "").split(" ").filter(Boolean);
+            if (words.length === 0) return [];
+            const lines = []; let line = words[0];
+            for (let i = 1; i < words.length; i++) {
+                const test = line + " " + words[i];
+                if (ctx.measureText(test).width > maxWidth) { lines.push(line); line = words[i]; }
+                else { line = test; }
+            }
+            lines.push(line);
+            return lines;
+        }
+        function downloadPNG() {
+            const titleText = document.querySelector(".title h1").textContent.trim();
+            const dateOn = document.getElementById("dateToggle").checked;
+            const creditText = "site by © tofumandu_";
+
+            const scale = 2;
+            const marginX = 38;
+            const marginY = 30;
+            const leftColW = 150;
+            const cellW = 150;
+            const headH = 58;
+            const rowH = 80;
+            const titleH = 42;
+            const dateH = dateOn ? 22 : 0;
+            const legendH = 34;
+            const creditH = 20;
+            const tableW = leftColW + cellW * state.members.length;
+            const tableH = headH + rowH * state.members.length;
+            const W = marginX * 2 + tableW;
+            const H = marginY * 2 + titleH + dateH + legendH + tableH + creditH + 16;
+
+            const can = document.createElement("canvas");
+            can.width = W * scale;
+            can.height = H * scale;
+            const ctx = can.getContext("2d");
+            ctx.scale(scale, scale);
+
+            const tableX = marginX;
+            const tableY = marginY + titleH + dateH + legendH;
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.fillStyle = "#101114";
+            ctx.textAlign = "center";
+            ctx.font = "800 28px Arial";
+            ctx.fillText(titleText, W / 2, marginY + 20);
+
+            if (dateOn) {
+                ctx.fillStyle = "#5d5e61";
+                ctx.font = "500 11px Arial";
+                ctx.fillText(`Created on ${currentDate()}`, W / 2, marginY + titleH + 14);
+            }
+
+            const legendItems = state.categories.map(cat => ({
+                cat,
+                width: (() => {
+                    ctx.font = "700 12px Arial";
+                    return ctx.measureText(cat.name).width;
+                })()
+            }));
+            const gap = 28;
+            const dotSize = 18;
+            const totalW = legendItems.reduce((sum, item) => sum + dotSize + 8 + item.width + gap, -gap);
+            let lx = W / 2 - totalW / 2;
+            const ly = marginY + titleH + (dateOn ? dateH : 0) + 20;
+            ctx.textAlign = "left";
+            legendItems.forEach(({ cat, width }) => {
+                ctx.beginPath();
+                ctx.fillStyle = cat.color;
+                ctx.arc(lx + dotSize / 2, ly - 5, dotSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = "rgba(0,0,0,0.12)";
+                ctx.stroke();
+
+                ctx.fillStyle = "#34363a";
+                ctx.font = "700 12px Arial";
+                ctx.fillText(cat.name, lx + dotSize + 8, ly);
+                lx += dotSize + 8 + width + gap;
+            });
+
+            const outerBg = "#dfe1e4";
+            const headerBg = "#e7e9eb";
+            const diagonalBg = "#d9d2ed";
+            const grid = "rgba(64,65,66,0.28)";
+            const labelColor = "#212429";
+            const cellDefault = "#ffffff";
+
+            function drawRoundedRect(x, y, w, h, r) {
+                const radius = Math.min(r, w / 2, h / 2);
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + w - radius, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+                ctx.lineTo(x + w, y + h - radius);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+                ctx.lineTo(x + radius, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+            }
+
+            ctx.beginPath();
+            drawRoundedRect(tableX, tableY, tableW, tableH, 16);
+            ctx.fillStyle = outerBg;
+            ctx.fill();
+
+            ctx.fillStyle = headerBg;
+            ctx.fillRect(tableX, tableY, tableW, headH);
+            ctx.fillRect(tableX, tableY + headH, leftColW, tableH - headH);
+
+            ctx.strokeStyle = grid;
+            ctx.lineWidth = 1;
+
+            for (let c = 0; c <= state.members.length; c++) {
+                const x = tableX + leftColW + c * cellW;
+                if (c <= state.members.length) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, tableY);
+                    ctx.lineTo(x, tableY + tableH);
+                    ctx.stroke();
+                }
+            }
+            for (let r = 0; r <= state.members.length; r++) {
+                const y = tableY + r * rowH;
+                ctx.beginPath();
+                ctx.moveTo(tableX, y);
+                ctx.lineTo(tableX + tableW, y);
+                ctx.stroke();
+            }
+
+            state.members.forEach((name, c) => {
+                const x = tableX + leftColW + c * cellW;
+                ctx.fillStyle = headerBg;
+                ctx.fillRect(x, tableY, cellW, headH);
+                ctx.fillStyle = labelColor;
+                ctx.font = "800 13px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(name, x + cellW / 2, tableY + headH / 2 + 4);
+            });
+
+            state.members.forEach((name, r) => {
+                const y = tableY + headH + r * rowH;
+                const x = tableX;
+                ctx.fillStyle = headerBg;
+                ctx.fillRect(x, y, leftColW, rowH);
+                ctx.fillStyle = labelColor;
+                ctx.font = "800 13px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(name, x + leftColW / 2, y + rowH / 2 + 4);
+            });
+
+            for (let r = 0; r < state.members.length; r++) {
+                for (let c = 0; c < state.members.length; c++) {
+                    const key = `${r}-${c}`;
+                    const x = tableX + leftColW + c * cellW;
+                    const y = tableY + headH + r * rowH;
+
+                    if (r === c) {
+                        ctx.fillStyle = diagonalBg;
+                        ctx.fillRect(x, y, cellW, rowH);
+                        ctx.fillStyle = "#7f7d80";
+                        ctx.font = "600 18px Arial";
+                        ctx.textAlign = "center";
+                        ctx.fillText("—", x + cellW / 2, y + rowH / 2 + 6);
+                    } else {
+                        const cellValue = state.cells[key] || {};
+                        const cat = cellValue.category !== undefined && cellValue.category !== null ? state.categories[cellValue.category] : null;
+                        ctx.fillStyle = cat ? cat.color : cellDefault;
+                        ctx.fillRect(x, y, cellW, rowH);
+
+                        ctx.textAlign = "center";
+                        ctx.font = "700 13px Arial";
+                        ctx.fillStyle = cat ? (isDark(cat.color) ? "#ffffff" : "#111214") : "#111214";
+                        const lines = wrapText(ctx, cellValue.text || "", cellW - 34).slice(0, 3);
+                        const lineHeight = 16;
+                        const startY = y + rowH / 2 - ((lines.length - 1) * lineHeight) / 2 + 4;
+                        lines.forEach((line, idx) => {
+                            ctx.fillText(line, x + cellW / 2, startY + idx * lineHeight);
+                        });
+                    }
+                }
+            }
+
+            ctx.fillStyle = "#f0f1f2";
+            ctx.fillRect(tableX + leftColW, tableY, tableW - leftColW, 1);
+            ctx.fillRect(tableX, tableY + headH, leftColW, 1);
+
+            ctx.fillStyle = "#36383c";
+            ctx.font = "800 12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("TWS Chemi Pair", tableX + leftColW / 2, tableY + headH / 2 + 2);
+
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = "#bbbdbf";
+            ctx.font = "700 7px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(creditText, W / 2, H - 10);
+            ctx.restore();
+
+            can.toBlob(blob => {
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = "tws-rps-chart.png";
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+            }, "image/png");
+        }
+        document.getElementById("download").onclick = downloadPNG;
+        document.getElementById("reset").onclick = () => { if (confirm("Reset the chart to the default TWS pairs?")) { state = clone(defaults); save(); render() } };
+        function render() { renderLegend(); renderTable(); renderPalette() }
+        render();
+    </script>
+</body>
+
+</html>
