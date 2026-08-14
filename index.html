@@ -4,6 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <title>TWS RPS Chart</title>
     <meta property="og:title" content="TWS RPS Chart">
     <meta property="og:description" content="TWS RPS Chart - by tofumandu_">
@@ -26,6 +31,7 @@
             --c2: #fffaa4;
             --c3: #FFFFFF;
             --c4: #404142;
+            --font-main: "Montserrat", "Segoe UI", Arial, sans-serif;
         }
 
         * {
@@ -36,7 +42,7 @@
             margin: 0;
             background: #fff;
             color: var(--ink);
-            font-family: Arial, Helvetica, sans-serif
+            font-family: var(--font-main);
         }
 
         .page {
@@ -57,17 +63,107 @@
             color: var(--ink);
         }
 
+        .page-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            margin-bottom: 16px;
+        }
+
         .title {
+            flex: 1;
             text-align: center;
-            margin: 0
+            margin: 0;
         }
 
         .title h1 {
-            margin: 8px auto 22px;
+            margin: 8px auto 0;
             font-size: 32px;
             line-height: 1.05;
             font-weight: 800;
             letter-spacing: -.03em
+        }
+
+        .header-actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(16, 17, 20, 0.04);
+            transition: all .18s ease;
+        }
+
+        .dropbtn i {
+            font-size: 11px;
+            opacity: .8;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            min-width: 170px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(10, 12, 14, 0.08);
+            z-index: 20;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 11px 14px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            background: #fff;
+            border-bottom: 1px solid rgba(64, 65, 66, 0.08);
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: #f5f5f6;
+        }
+
+        .dropdown:hover .dropdown-content,
+        .dropdown:focus-within .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn,
+        .dropdown:focus-within .dropbtn {
+            background: #f8f8f8;
+            border-color: rgba(64, 65, 66, 0.32);
         }
 
         .toprow {
@@ -368,6 +464,11 @@
                 font-size: 25px
             }
 
+            .dropbtn,
+            .dropbtn i {
+                font-size: 10px;
+            }
+
             .toprow {
                 align-items: flex-start
             }
@@ -398,6 +499,11 @@
         }
 
         @media(max-width: 600px) {
+
+            .dropbtn,
+            .dropbtn i {
+                font-size: 8px;
+            }
 
             .member,
             .pair {
@@ -487,10 +593,23 @@
 
 <body>
     <div class="page">
-        <div class="title">
-            <h1>TWS RPS CHART</h1>
+        <div class="page-header">
+            <div class="title">
+                <h1>TWS RPS Chart</h1>
+            </div>
+            <div class="header-actions">
+                <div class="dropdown">
+                    <button class="dropbtn" type="button">
+                        chart
+                        <i class="fa-solid fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="index.html">RPS Chart</a>
+                        <a href="chemi.html">Chemi Chart</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
         <div class="toprow">
             <div>
                 <div id="legend" class="legend"></div>
