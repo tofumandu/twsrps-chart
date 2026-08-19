@@ -511,6 +511,9 @@ tbody tr:last-child td {
 }
 
 @media(max-width: 600px) {
+    .title h1 {
+        font-size: 20px;
+    }
 
     .dropbtn,
     .dropbtn i {
@@ -575,6 +578,9 @@ tbody tr:last-child td {
 }
 
 @media(max-width: 500px) {
+    .title h1 {
+        font-size: 18px;
+    }
 
     .member,
     .pair {
@@ -603,4 +609,30 @@ tbody tr:last-child td {
         font-size: 7px;
     }
 
+}
+
+@media(max-width: 400px) {
+    .legend-fixed {
+        font-size: clamp(5px, 1.4vw, 7px);
+        font-weight: 700;
+        color: #34363a;
+        padding: 1px 2px
+    }
+
+    .title h1 {
+        font-size: 15px;
+    }
+
+    .member,
+    .pair {
+        font-size: 5.5px;
+    }
+}
+
+@media(max-width: 360px) {
+
+    .member,
+    .pair {
+        font-size: 5px;
+    }
 }
