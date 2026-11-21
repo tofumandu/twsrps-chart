@@ -309,8 +309,6 @@ button:hover {
 .toggle input:checked+.switch:after {
     transform: translateX(14px)
 }
-
-/* ---- Responsive chart: shrinks with its container instead of scrolling ---- */
 .chart-shell {
     border: 1px solid #e5e6e9;
     border-radius: 16px;
@@ -330,7 +328,6 @@ td {
     padding: 0;
 
     border: 0.5px solid var(--line);
-    /* border-opacity: 0.3; */
 
 }
 
@@ -338,7 +335,6 @@ thead th {
     height: clamp(38px, 9cqi, 66px);
     background: var(--header);
     color: #000000;
-    /* border: 1px solid var(); */
 }
 
 thead th:first-child {
@@ -355,8 +351,6 @@ tbody th {
     height: clamp(44px, 11.5cqi, 80px);
     background: var(--header);
     color: #36383c;
-    /* border-right: 1px solid rgba(255, 255, 255, .13);
-            border-bottom: 1px solid rgba(255, 255, 255, .13) */
 }
 
 tbody tr:last-child th {
@@ -410,6 +404,12 @@ tbody tr:last-child td {
     box-shadow: none
 }
 
+.cell:disabled {
+    color: inherit;
+    cursor: default;
+    opacity: 1;
+}
+
 .pair {
     width: 100%;
     height: 100%;
@@ -424,6 +424,10 @@ tbody tr:last-child td {
     color: inherit;
     cursor: pointer;
     overflow-wrap: break-word;
+}
+
+.cell:disabled .pair {
+    cursor: default;
 }
 
 .status {
